@@ -167,3 +167,32 @@ class BookDelete(PermissionRequiredMixin, DeleteView):
             return HttpResponseRedirect(
                 reverse("book-delete", kwargs={"pk": self.object.pk})
             )
+        
+class BookInstCreate(PermissionRequiredMixin, CreateView):
+    model = BookInstance
+    fields = ['id', 'book', 'imprint', 'due_back', 'language', 'status']
+    permission_required = 'catalog.add_bookinstance'
+
+class BookInstUpdate(PermissionRequiredMixin, UpdateView):
+    model = BookInstance
+    # Not recommended (potential security issue if more fields added)
+    fields = '__all__'
+    permission_required = 'catalog.change_bookinstance'
+
+class BookInstDelete(PermissionRequiredMixin, DeleteView):
+    def associated_book(self):
+        return self.object.book.id
+    primary = associated_book
+    model = BookInstance
+    success_url = reverse_lazy('book-detail/primary')
+    permission_required = 'catalog.delete_bookinstance'
+
+    def form_valid(self, form):
+        try:
+            self.object.delete()
+            return HttpResponseRedirect(self.success_url)
+        except Exception as e:
+            return HttpResponseRedirect(
+                reverse("book-instance-delete", kwargs={"pk": self.object.pk})
+            )
+    

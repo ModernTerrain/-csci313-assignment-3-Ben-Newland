@@ -139,3 +139,7 @@ class BookInstance(models.Model):
     def is_overdue(self):
         """Determines if the book is overdue based on due date and current date."""
         return bool(self.due_back and date.today() > self.due_back)
+    
+    def get_absolute_url(self):
+        """Returns the URL to access a detail record for this book."""
+        return reverse('book-detail', args=[str(self.book.id)])
