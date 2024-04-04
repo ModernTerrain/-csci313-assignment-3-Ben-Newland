@@ -170,7 +170,7 @@ class BookDelete(PermissionRequiredMixin, DeleteView):
         
 class BookInstCreate(PermissionRequiredMixin, CreateView):
     model = BookInstance
-    fields = ['id', 'book', 'imprint', 'due_back', 'language', 'status']
+    fields = ['id', 'book', 'imprint', 'due_back', 'language', 'status', 'borrower']
     permission_required = 'catalog.add_bookinstance'
 
 class BookInstUpdate(PermissionRequiredMixin, UpdateView):
@@ -188,11 +188,12 @@ class BookInstDelete(PermissionRequiredMixin, DeleteView):
     permission_required = 'catalog.delete_bookinstance'
 
     def form_valid(self, form):
+        primary = self.object.book.id
         try:
             self.object.delete()
             return HttpResponseRedirect(self.success_url)
         except Exception as e:
             return HttpResponseRedirect(
-                reverse("book-instance-delete", kwargs={"pk": self.object.pk})
+                reverse("book-detail", kwargs={"pk": primary})
             )
     

@@ -24,6 +24,9 @@
       <p><strong>Imprint:</strong> {{ copy.imprint }}</p>
       <p><strong>Language:</strong> {{ copy.language }}</p>
       <p class="text-muted"><strong>Id:</strong> {{ copy.id }}</p>
+      {% if perms.catalog.change_bookinstance %}
+      <a href="{% url 'book-instance-update' copy.id %}">Update Copy</a></p>
+      {% endif %}
       {% if not copy.status == 'o' and not copy.status == 'r' and perms.catalog.delete_bookinstance %}
       <a href="{% url 'book-instance-delete' copy.id %}">Delete Copy</a></p>
       {% endif %}
